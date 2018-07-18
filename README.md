@@ -5,6 +5,10 @@
 ### Install clkedit via roswell
 
 ```
+~ $ ros install dbym4820/utsushiyo
+.
+.
+.
 ~ $ ros install dbym4820/clkedit
 .
 .
