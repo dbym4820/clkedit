@@ -1,0 +1,9 @@
+[submodule "src/origin"]
+	path = src/origin
+	url = https://github.com/dbym4820/utsushiyo.git
+[submodule "src/utsushiyo"]
+	path = src/utsushiyo
+	url = https://github.com/dbym4820/utsushiyo.git
+[submodule "src/vis"]
+	path = src/vis
+	url = https://github.com/dbym4820/vis.git

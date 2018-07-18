@@ -1,0 +1,15 @@
+
+#k-ins {
+    margin-left: 10px; 
+}
+
+#knowledge-structure {
+    float: left;
+    width: 70vw;
+    height: 80vh;
+    border: 1px solid lightgray;
+}
+
+#clear-knowledge-insertion-btn {
+    float: left;
+}
