@@ -20,3 +20,14 @@ Open localhost:26262 on your browser
 ### Open clkedit on your browser
 
 http://localhost:26262
+
+
+### Image
+
+#### Network select window
+
+![](./static/select.png)
+
+#### Network edit window
+
+![](./static/main.png)
