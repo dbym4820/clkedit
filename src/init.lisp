@@ -23,9 +23,9 @@
    :set-attribute))
 (in-package :clkedit.init)
 
-(defconstant +p-name+ "clkedit")
+(defvar *p-name* "clkedit")
 (defparameter *clkedit-project*
-  (make-project-env +p-name+))
+  (make-project-env *p-name*))
 
 (defvar *original-db-path*
   (format nil "~A~A"
