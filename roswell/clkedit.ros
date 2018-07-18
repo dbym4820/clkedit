@@ -5,14 +5,24 @@ exec ros -Q -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(clkedit) :silent t)
+  #+quicklisp (ql:quickload '(clkedit uiop) :silent t)
   )
 
 (defpackage :ros.script.clkedit
-  (:use :cl :clkedit))
+  (:use :cl :clkedit)
+  (:import-from :uiop
+                :directory-exists-p))
 (in-package :ros.script.clkedit)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (run-server))
+  (let ((command (first argv)))
+    (cond ((string= command "clear")
+		    (clear-data))
+	  ((string= command "init")
+		    (init))
+	  (t
+	   (when (not (directory-exists-p "~/.clkedit"))
+	     (init))
+	   (run-server)))))
 ;;; vim: set ft=lisp lisp:
