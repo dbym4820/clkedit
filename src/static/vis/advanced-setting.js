@@ -57,11 +57,31 @@ function knowledgeRender(){
     function reflectEdit(d, callback){
 	d.label = $("#node-edit-text-area").val();
 	$("#node-edit-text-area").val(null);
+        clearPopUp();
 	callback(d);
     }
 
+    function clearPopUp() {
+	document.getElementById('knolwedge-edit-text-save-btn').onclick = null;
+	document.getElementById('editCancelBtn').onclick = null;
+        document.getElementById('network-popUp').style.display = 'none';
+    }
+    
+    function cancelEdit(callback) {
+        clearPopUp();
+        callback(null);
+    }
+
+    function editFloatUp(d, callback){
+	$("#before-edit-knowledge-label").empty("span");
+	$("#before-edit-knowledge-label").append("<span>"+d.label+"</span>");
+	document.getElementById('network-popUp').style.display = 'block';
+	document.getElementById('editCancelBtn').onclick = cancelEdit.bind(this, callback);
+	document.getElementById('knolwedge-edit-text-save-btn').onclick = reflectEdit.bind(this, d, callback);
+    }
     
     var options = {
+	physics: true,
 	interaction:{
 	    hover:true,
 	    multiselect: true,
@@ -69,11 +89,9 @@ function knowledgeRender(){
 	},
 	manipulation: {
 	    enabled: true,
-	    editNode: function (d, callback) {
-		$("#before-edit-knowledge-label").empty("span");
-		$("#before-edit-knowledge-label").append("<span>"+d.label+"</span>");
-		document.getElementById('knolwedge-edit-text-save-btn').onclick = reflectEdit.bind(this, d, callback);
-            }
+	    editNode: function(d, callback){
+		editFloatUp(d, callback);
+	    }
 	},
 	configure: {
 	    enabled: false,
@@ -82,9 +100,7 @@ function knowledgeRender(){
 	},
 	edges:{
 	    arrows: {
-		to:     {enabled: true, scaleFactor:1, type:'arrow'},
-		middle: {enabled: false, scaleFactor:1, type:'arrow'},
-		from:   {enabled: false, scaleFactor:1, type:'arrow'}
+		to: {enabled: true, scaleFactor:1, type:'arrow'},
 	    },
 	    arrowStrikethrough: true,
 	    chosen: true

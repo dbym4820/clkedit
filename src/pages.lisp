@@ -97,11 +97,26 @@
 		   (:div :style "clear:both;")
 		   (:br)
 		   (:div
-		    (:label "編集前のノード: "
-			    (:span :id "before-edit-knowledge-label" )))
-		   (:input :type "text" :id "node-edit-text-area" :style "width:500px; height:40px;" :placeholder "エディットするノードのラベルを入力してください")
-		   (:button :type "button" :class "btn btn-info" :id "knolwedge-edit-text-save-btn" "確定")
-		   (:button :type "button" :class "btn btn-warning" :id "knowledge-ensure-btn" "保存"))))))
+
+		    (:div :id "network-popUp"
+			  (:span "編集ウィンドウ")
+			  (:br)
+			  (:table :style "margin:auto;" :id "editTable"
+				  (:br)
+				  (:tr
+				   (:td "編集前のラベル")
+				   (:td " : ")
+				   (:td (:span :id "before-edit-knowledge-label")))
+				  (:tr (:td (:br)) (:td) (:td))
+				  (:tr
+				   (:td "編集後のラベル")
+				   (:td " : ")
+				   (:td (:input :id "node-edit-text-area" :value "" :size "40" :placeholder "編集するノードのラベルを入力してください")))
+				  (:tr (:td (:br)) (:td) (:td)))
+			  (:div :id "btn-modules"
+				(:button :type "button" :class "btn btn-info" :id "knolwedge-edit-text-save-btn" "確定")
+				(:button :type "button" :class "btn btn-error" :id "editCancelBtn" "中止"))))
+		    (:button :type "button" :class "btn btn-warning" :id "knowledge-ensure-btn" "保存"))))))
 
 (defroute "/create-domain" (params :method :get)
   (progn (create-new-domain (cdr (assoc "new-domain-name" params :test #'string=)))
