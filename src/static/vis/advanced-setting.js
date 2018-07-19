@@ -79,6 +79,15 @@ function knowledgeRender(){
 	    enabled: false,
 	    filter: 'nodes,edges',
 	    showButton: true
+	},
+	edges:{
+	    arrows: {
+		to:     {enabled: true, scaleFactor:1, type:'arrow'},
+		middle: {enabled: false, scaleFactor:1, type:'arrow'},
+		from:   {enabled: false, scaleFactor:1, type:'arrow'}
+	    },
+	    arrowStrikethrough: true,
+	    chosen: true
 	}
     };
 
@@ -91,6 +100,7 @@ function knowledgeRender(){
     });
     network.on("doubleClick", function (params) {
 	params.event = "[original event]";
+	
 	//console.log(data.nodes._data);
     });
     network.on("oncontext", function (params) {

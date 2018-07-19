@@ -133,21 +133,24 @@
 (defun node-save (domain-id graph-json-string)
   (when (not (string= "[]" graph-json-string))
     (let ((cur-time (get-timestamp)))
-      (send-query (make-instance 'sql-delete :table "knowledge_node" :cond-list (list (format nil "domain_id=~A" domain-id))))
-      (loop for node in (shaping-json graph-json-string 4 7 t)
-	    do (send-query
-		(make-instance 'sql-insert
-			       :table "knowledge_node"
-			       :param '("domain_id" "knowledge_id_in_graph" "knowledge_content" "created_at" "edited_at")
-			       :val (list domain-id (first node) (second node) cur-time cur-time)))))))
+      (progn
+	(format t "~% node: ~A~%" graph-json-string)
+	(send-query (make-instance 'sql-delete :table "knowledge_node" :cond-list (list (format nil "domain_id=~A" domain-id))))
+	(loop for node in (shaping-json graph-json-string 4 7 t)
+	      do (send-query
+		  (make-instance 'sql-insert
+				 :table "knowledge_node"
+				 :param '("domain_id" "knowledge_id_in_graph" "knowledge_content" "created_at" "edited_at")
+				 :val (list domain-id (first node) (second node) cur-time cur-time))))))))
 
 (defun edge-save (domain-id edge-json-string)
   (when (not (string= "[]" edge-json-string))
     (let ((cur-time (get-timestamp)))
       (send-query (make-instance 'sql-delete :table "knowledge_edge" :cond-list (list (format nil "domain_id=~A" domain-id))))
       (loop for node in (shaping-json edge-json-string 6 4 t)
-	  do (send-query
-	      (make-instance 'sql-insert
-	  		     :table "knowledge_edge"
-	  		     :param '("domain_id" "edge_from" "edge_to" "created_at" "edited_at")
-	  		     :val (list domain-id (first node) (second node) cur-time cur-time)))))))
+	    do (progn (format t "~A~%" node)
+		 (send-query
+		(make-instance 'sql-insert
+			       :table "knowledge_edge"
+			       :param '("domain_id" "edge_from" "edge_to" "created_at" "edited_at")
+			       :val (list domain-id (format nil "~A" (first node)) (format nil "~A" (second node)) cur-time cur-time))))))))

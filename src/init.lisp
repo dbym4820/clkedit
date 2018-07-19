@@ -30,7 +30,7 @@
 (defvar *original-db-path*
   (format nil "~A~A"
 	  (utsushiyo:project-root-path *clkedit-project*)
-	  "/src/database/graphdb-origin.sqlite"))
+	  "src/database/graphdb-origin.sqlite"))
 
 (defvar *user-db-path*
   (format nil "~A~A" (utsushiyo:config-dir *clkedit-project*) "graphdb.sqlite"))
