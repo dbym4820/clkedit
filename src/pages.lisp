@@ -104,6 +104,13 @@
 			  (:table :style "margin:auto;" :id "editTable"
 				  (:br)
 				  (:tr
+				   (:td "ノードのタイプ")
+				   (:td " : ")
+				   (:td (:select :id "node-type-selection" :name "node-type-sel"
+						 (:option :value "fact" :selected "selected" "Knowledge Node")
+						 (:option :value "predicate" "Edge Node"))))
+				  (:tr (:td (:br)) (:td) (:td))
+				  (:tr
 				   (:td "編集前のラベル")
 				   (:td " : ")
 				   (:td (:span :id "before-edit-knowledge-label")))

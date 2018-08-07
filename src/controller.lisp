@@ -12,6 +12,8 @@
 		:*user-db-path*)
   (:import-from :clkedit.utils
 		:get-timestamp)
+  (:import-from :jonathan
+		:parse)
   (:export
    :send-query
    :select
@@ -88,6 +90,7 @@
 		   :cond-list (list (format nil "domain_id=~A" domain-id))))))
 
 (defun node-struct-jsonfy (domain-id)
+  "older one"
   (format nil "[~{{~{\"id\":\"~A\", \"label\":\"~A\"~}}~^,~}]"
 	  (mapcar #'(lambda (d)
 		      (list (second d) (fourth d)))
@@ -97,6 +100,18 @@
 				  :param '("knowledge_id_in_graph" "knowledge_content")
 				  :table "knowledge_node"
 				  :cond-list (list (format nil "domain_id=~A" domain-id)))))))
+
+(defun node-struct-jsonfy (domain-id)
+  (format nil "[~{{~{\"id\":\"~A\", \"label\":\"~A\", \"group\":\"~A\"~}}~^,~}]"
+	  (mapcar #'(lambda (d)
+		      (list (second d) (fourth d) (sixth d)))
+		  (send-query
+		   (make-instance 'select
+				  :dist t
+				  :param '("knowledge_id_in_graph" "knowledge_content" "node_type")
+				  :table "knowledge_node"
+				  :cond-list (list (format nil "domain_id=~A" domain-id)))))))
+
 
 (defun edge-struct-jsonfy (domain-id)
   (format nil "[~{{~{\"from\":\"~A\", \"to\":\"~A\"~}}~^,~}]"
@@ -116,7 +131,38 @@
 			       :param '("domain_name" "created_at" "edited_at")
 			       :val (list domain-name cur-time cur-time)))))
 
-(defun shaping-json (raw-data trim-from-even trim-from-odd &optional trim-end)
+
+(defun shaping-node-json (raw-data)
+  "return list: (knowledge_graph_id_in_graph(id) knowledge_content(label) node_type(group))"
+  ;;(parse raw-data)
+  (let* ((full (mapcar #'(lambda (d)
+			   (string-trim "}" (string-trim "{" (string-trim "\"" (string-trim " " d)))))
+		       (split-sequence:split-sequence #\, (subseq raw-data 1 (1- (length raw-data))))))
+	 (triple-set-list
+	   (list
+	    (loop for x from 0
+		  for y in full
+		  when (= 0 (mod x 3))
+		    collect y)
+	    (loop for x from 0
+		  for y in full
+		  when (= 1 (mod x 3))
+		    collect y)
+	    (loop for x from 0
+		  for y in full
+		  when (= 2 (mod x 3))
+		    collect y)))
+	 (first-data
+	   (loop for y in (first triple-set-list)
+		 collect (subseq y 4 (1- (length y)))))
+    	 (second-data (loop for y in (second triple-set-list)
+    			    collect (subseq y 7 (1- (length y)))))
+    	 (third-data (loop for y in (third triple-set-list)
+    			   collect (subseq y 7 (1- (length y))))))
+    (mapcar #'list first-data second-data third-data)))
+
+
+(defun shaping-edge-json (raw-data trim-from-even trim-from-odd &optional trim-end)
   (let* ((full (mapcar #'(lambda (d)
 			   (string-trim "}" (string-trim "{" (string-trim "\"" (string-trim " " d)))))
 		       (split-sequence:split-sequence #\, (subseq raw-data 1 (1- (length raw-data))))))
@@ -130,24 +176,26 @@
 			   collect (subseq y trim-from-odd (if trim-end (1- (length y)) (length y))))))
     (mapcar #'list even-data odd-data)))
 
+
+
 (defun node-save (domain-id graph-json-string)
   (when (not (string= "[]" graph-json-string))
     (let ((cur-time (get-timestamp)))
       (progn
 	(format t "~% node: ~A~%" graph-json-string)
 	(send-query (make-instance 'sql-delete :table "knowledge_node" :cond-list (list (format nil "domain_id=~A" domain-id))))
-	(loop for node in (shaping-json graph-json-string 4 7 t)
+	(loop for node in (shaping-node-json graph-json-string)
 	      do (send-query
 		  (make-instance 'sql-insert
 				 :table "knowledge_node"
-				 :param '("domain_id" "knowledge_id_in_graph" "knowledge_content" "created_at" "edited_at")
-				 :val (list domain-id (first node) (second node) cur-time cur-time))))))))
+				 :param '("domain_id" "knowledge_id_in_graph" "knowledge_content" "node_type" "created_at" "edited_at")
+				 :val (list domain-id (first node) (second node) (third node) cur-time cur-time))))))))
 
 (defun edge-save (domain-id edge-json-string)
   (when (not (string= "[]" edge-json-string))
     (let ((cur-time (get-timestamp)))
       (send-query (make-instance 'sql-delete :table "knowledge_edge" :cond-list (list (format nil "domain_id=~A" domain-id))))
-      (loop for node in (shaping-json edge-json-string 6 4 t)
+      (loop for node in (shaping-edge-json edge-json-string 6 4 t)
 	    do (progn (format t "~A~%" node)
 		 (send-query
 		(make-instance 'sql-insert

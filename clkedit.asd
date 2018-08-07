@@ -18,6 +18,7 @@
                :clack
                :ningle
                :woo
+	       :jonathan
 	       :split-sequence
 	       :utsushiyo)
   :components ((:static-file "LICENSE-MIT")

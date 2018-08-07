@@ -57,6 +57,7 @@ function knowledgeRender(){
     function reflectEdit(d, callback){
 	d.label = $("#node-edit-text-area").val();
 	$("#node-edit-text-area").val(null);
+	d.group = $('[name=node-type-sel]').val();
         clearPopUp();
 	callback(d);
     }
@@ -97,6 +98,25 @@ function knowledgeRender(){
 	    enabled: false,
 	    filter: 'nodes,edges',
 	    showButton: true
+	},
+	groups: {
+	    //useDefaultGroups: true,
+	    fact: {
+		color: {
+		    border: 'green',
+		    background: 'lightgreen',
+		}
+	    },
+	    predicate: {
+		color: {
+		    border: 'red',
+		    background: 'salmon',
+		    // highlight: {
+		    // 	border: '#2B7CE9',
+		    // 	background: '#D2E5FF'
+		    // }
+		}
+	    }
 	},
 	edges:{
 	    arrows: {
@@ -180,7 +200,7 @@ function knowledgeSelectionSave(){
     /* システム（当該ドメイン）が持っているすべての知識リスト */
     let resultSystemNodeString = new Array();
     Object.keys(dataKnowledge.nodes._data).forEach(function(d){
-    	resultSystemNodeString.push("{id:'"+dataKnowledge.nodes._data[d]['id']+"', label:'"+dataKnowledge.nodes._data[d]['label']+"'}");
+    	resultSystemNodeString.push("{id:'"+dataKnowledge.nodes._data[d]['id']+"', label:'"+dataKnowledge.nodes._data[d]['label']+"', group:'"+dataKnowledge.nodes._data[d]['group']+"'}");
     });
     resultSystemNodeString = "["+resultSystemNodeString.toString()+"]";
 
