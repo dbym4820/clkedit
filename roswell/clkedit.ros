@@ -16,7 +16,8 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((command (first argv)))
+  (let ((command (first argv))
+	(option1 (second argv)))
     (cond ((string= command "clear")
 		    (clear-data))
 	  ((string= command "init")
@@ -24,5 +25,7 @@ exec ros -Q -- $0 "$@"
 	  (t
 	   (when (not (directory-exists-p "~/.clkedit"))
 	     (init))
-	   (run-server)))))
+	   (if (string= command "port")
+	       (run-server second)
+	       (run-server))))))
 ;;; vim: set ft=lisp lisp:

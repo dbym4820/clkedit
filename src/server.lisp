@@ -64,10 +64,8 @@ Page settings
   "(return-static-vector-file \"img/vis/sample.png\")"
   (read-file-into-byte-vector (format nil "~A~A" *static-file-path* file-path-from-static-dir)))
 
-
 (defmacro defroute (name (params &rest route-args) &body body)
   `(setf (ningle:route *serv* ,name ,@route-args)
          #'(lambda (,params)
 	     (declare (ignorable ,params))
 	     (eval ,@body))))
-
